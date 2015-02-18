@@ -1,8 +1,15 @@
-// -----------  Minimales 2D JOGL-Programm  ------------------------------
+package ch.fhnw;// -----------  Minimales 2D JOGL-Programm  ------------------------------
 //
 import javax.media.opengl.*;
 public class MyFirst2D extends GLMinimal
 {
+
+    float left = -1;
+    float right = 1;
+    float bottom;
+    float top;
+    float near = -100;
+    float far = 100;
 
    void zeichneDreieck(GL4 gl)
    {  vertexBuf.rewind();
@@ -14,6 +21,18 @@ public class MyFirst2D extends GLMinimal
       copyBuffer(gl,nVertices);   // VertexArray in OpenGL-Buffer kopieren
       gl.glDrawArrays(GL4.GL_TRIANGLES,0,nVertices);  // Dreieck zeichnen
    }
+
+    @Override
+    public void reshape(GLAutoDrawable drawable, int x, int y,
+                        int width, int height)
+    {  GL4 gl = drawable.getGL().getGL4();
+        // Set the viewport to be the entire window
+        gl.glViewport(0, 0, width, height);
+        float aspect = (float)height/width;
+        top = right * aspect;
+        bottom = left * aspect;
+        setProjection(gl, left, right, bottom, top, near, far);
+    }
 
     @Override
     public void display(GLAutoDrawable drawable)          //  render image

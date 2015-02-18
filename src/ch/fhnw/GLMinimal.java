@@ -1,4 +1,4 @@
-// -----------  Minimales 3D JOGL-Programm mit Shadern  ------------------------------
+package ch.fhnw;// -----------  Minimales 3D JOGL-Programm mit Shadern  ------------------------------
 //                                                         E.Gutknecht, Feb 2015
 //   adaptiert von:
 //   http://www.lighthouse3d.com/cg-topics/code-samples/opengl-3-3-glsl-1-5-sample/
@@ -38,7 +38,7 @@ public class GLMinimal
     float[] currentColor = { 1,1,1,1};          // aktuelle Farbe fuer Vertices
 
     // -------  Vertex-Array fuer Position- und Color-Attribute  ------------
-    FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
+    public FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
     int vaoId;                                  // VertexArray Object Identifier
     int vertexBufId;                            // Vertex Buffer Identifier
 
@@ -55,7 +55,7 @@ public class GLMinimal
     }
 
 
-    void putVertex(float x, float y, float z)      // Vertex-Daten in Buffer speichern
+    public void putVertex(float x, float y, float z)      // Vertex-Daten in Buffer speichern
     {  vertexBuf.put(x);
        vertexBuf.put(y);
        vertexBuf.put(z);
@@ -67,7 +67,7 @@ public class GLMinimal
     }
 
 
-    void copyBuffer(GL gl,int nVertices)            // Vertex-Array in OpenGL-Buffer kopieren
+    public void copyBuffer(GL gl,int nVertices)            // Vertex-Array in OpenGL-Buffer kopieren
     {  vertexBuf.rewind();
        gl.glBindBuffer(GL4.GL_ARRAY_BUFFER, vertexBufId);
        gl.glBufferSubData(GL4.GL_ARRAY_BUFFER, 0, nVertices*vertexSize, vertexBuf);

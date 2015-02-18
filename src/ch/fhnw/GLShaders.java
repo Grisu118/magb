@@ -1,4 +1,4 @@
-/**
+package ch.fhnw; /**
 * This is a port of some sample code from:
 * http://www.lighthouse3d.com/cg-topics/code-samples/opengl-3-3-glsl-1-5-sample/
 */

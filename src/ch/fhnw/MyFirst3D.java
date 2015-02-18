@@ -1,4 +1,4 @@
-// -----------  Minimales 3D JOGL-Programm  (Dreieck im Raum)  ------------------------------
+package ch.fhnw;// -----------  Minimales 3D JOGL-Programm  (Dreieck im Raum)  ------------------------------
 import javax.media.opengl.*;
 public class MyFirst3D extends GLMinimal
 {
