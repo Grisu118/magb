@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jogl-all">
+    <CLASSES>
+      <root url="jar://D:/Dropbox/Studium/4. Sem/magb/Dozent/1-Computergrafik/jogl_fs2015/jogl_fs2015/jogamp-all-platforms/jar/jogl-all.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://D:/Dropbox/Studium/4. Sem/magb/Dozent/1-Computergrafik/jogl_fs2015/jogl_fs2015/jogamp-all-platforms/jogl-java-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>
