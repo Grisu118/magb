@@ -17,6 +17,10 @@ public class DrawCircle extends GLMinimal {
     float near = -100;
     float far = 100;
 
+    public DrawCircle() {
+        super();
+    }
+
     private void drawCircle(GL4 gl, float r, boolean fill, int nPunkte) {
 
         vertexBuf.rewind();
@@ -62,6 +66,6 @@ public class DrawCircle extends GLMinimal {
     //  -----------  main-Methode  ---------------------------
 
     public static void main(String[] args) {
-        DrawCircle sample = new DrawCircle();
+        new DrawCircle();
     }
 }
