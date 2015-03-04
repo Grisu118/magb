@@ -41,7 +41,7 @@ public class Ikosaeder extends GLMinimal {
 
     private static final Vec3 TOLIGHT = new Vec3(-1,2,1).normalize();
 
-    private double winkel = 0;
+    private float winkel = 0;
 
 
     public Ikosaeder() {
@@ -61,9 +61,11 @@ public class Ikosaeder extends GLMinimal {
             Vec3 B = new Vec3(VDATA[TINDICES[i][1]][0], VDATA[TINDICES[i][1]][1], VDATA[TINDICES[i][1]][2]);
             Vec3 C = new Vec3(VDATA[TINDICES[i][2]][0], VDATA[TINDICES[i][2]][1], VDATA[TINDICES[i][2]][2]);
 
-            A = rotX(winkel).transform(A);
-            B = rotX(winkel).transform(B);
-            C = rotX(winkel).transform(C);
+            Mat3 rot = Mat3.rotate(winkel, TOLIGHT);
+
+            A = rot.transform(A);
+            B = rot.transform(B);
+            C = rot.transform(C);
 
             //n = (B-A) x (C-A)
             Vec3 n = B.subtract(A).cross(C.subtract(A)).normalize();
