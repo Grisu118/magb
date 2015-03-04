@@ -11,7 +11,7 @@ import java.nio.*;
 import com.jogamp.common.nio.*;
 
 public class GLMinimal
-       implements WindowListener, GLEventListener
+       implements WindowListener, GLEventListener, KeyListener
 {
     // --------------------  Globale Daten  ------------------------------
 
@@ -26,7 +26,7 @@ public class GLMinimal
     int windowWidth = 800;
     int windowHeight = 600;
     float[] clearColor = {0,0,1,1};             // Fensterhintergrund (Blau)
-    GLCanvas canvas;                            // OpenGL Window
+    public GLCanvas canvas;                            // OpenGL Window
 
 
     // -------  Vertex-Daten  ------------
@@ -41,6 +41,9 @@ public class GLMinimal
     public FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
     int vaoId;                                  // VertexArray Object Identifier
     int vertexBufId;                            // Vertex Buffer Identifier
+
+    public int azimut = 0;
+    public int elevation = 0;
 
 
     // -----------------------------  Methoden  --------------------------------
@@ -121,6 +124,7 @@ public class GLMinimal
     {  Frame f = new Frame("Java OpenGL");
        f.setSize(windowWidth, windowHeight);
        f.addWindowListener(this);
+       f.addKeyListener(this);
        GLProfile glp = GLProfile.get(GLProfile.GL4);
        GLCapabilities glCapabilities = new GLCapabilities(glp);
        canvas = new GLCanvas(glCapabilities);
@@ -206,4 +210,27 @@ public class GLMinimal
     public void windowIconified(WindowEvent e) {  }
     public void windowOpened(WindowEvent e) {  }
 
+    @Override
+    public void keyTyped(KeyEvent e) { }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT: azimut--;
+                break;
+            case KeyEvent.VK_RIGHT: azimut++;
+                break;
+            case KeyEvent.VK_UP: elevation++;
+                break;
+            case KeyEvent.VK_DOWN: elevation--;
+                break;
+            default:
+                break;
+
+        }
+        canvas.repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) { }
 }
