@@ -22,6 +22,7 @@ public class Ikosaeder extends GLMinimal {
     float top;
     float near = -100;
     float far = 100;
+    float alpha = 1;
 
     private static final float X = 0.525731112119133606f;
     private static final float Z = 0.850650808352039932f;
@@ -60,16 +61,17 @@ public class Ikosaeder extends GLMinimal {
         vertexBuf.rewind();
         float brightness = 0;
 
-            //n = (B-A) x (C-A)
-            Vec3 n = B.subtract(A).cross(C.subtract(A)).normalize();
-            brightness = 0.5f + 0.4f * n.dot(TOLIGHT);  // Lambert-Gesetz
-            if ( brightness < 0) brightness = 0;
-            setColor(brightness, 0, 0, 1);   // Rot-Stufe
-            putVertex(A.x(), A.y(), A.z());
-            putVertex(B.x(), B.y(), B.z());
-            putVertex(C.x(), C.y(), C.z());
+        //n = (B-A) x (C-A)
+        Vec3 n = B.subtract(A).cross(C.subtract(A)).normalize();
+        brightness = 0.5f + 0.4f * n.dot(TOLIGHT);  // Lambert-Gesetz
+        if ( brightness < 0) brightness = 0;
+        setColor(brightness, 0, 0, alpha);   // Rot-Stufe
+        putVertex(A.x(), A.y(), A.z());
+        putVertex(B.x(), B.y(), B.z());
+        putVertex(C.x(), C.y(), C.z());
 
-            setColor(0,0.2f,0.2f,1);
+        setColor(0,0.2f,0.2f,1);
+
 
 
         copyBuffer(gl, 20*3);   // VertexArray in OpenGL-Buffer kopieren
@@ -77,8 +79,6 @@ public class Ikosaeder extends GLMinimal {
     }
 
     private void subdivide(GL4 gl, Vec3 A, Vec3 B, Vec3 C, int depth) {
-
-
         if (depth > 0) {
             Vec3 aa = new Vec3(A.x + B.x, A.y + B.y, A.z + B.z).normalize();
             Vec3 bb = new Vec3(B.x + C.x, C.y + B.y, C.z + B.z).normalize();
@@ -121,6 +121,13 @@ public class Ikosaeder extends GLMinimal {
     public void display(GLAutoDrawable drawable) {        //  render image
         super.display(drawable);
         GL4 gl = drawable.getGL().getGL4();
+        scale(gl, new Vec3(0.5f, 0.5f, 0.5f));
+        alpha = 1;
+        drawIcosaeder(gl);
+        scale(gl, new Vec3(2, 2, 2));
+        rotate(gl, 20, new Vec3(1,3,2));
+        translate(gl, new Vec3(2,0,0));
+
         drawIcosaeder(gl);
         setCameraSystem(gl, 10, elevation, azimut);
     }
