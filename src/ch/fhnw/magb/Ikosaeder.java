@@ -40,8 +40,7 @@ public class Ikosaeder extends GLMinimal {
     };
 
     private static final Vec3 TOLIGHT = new Vec3(-1,2,1).normalize();
-
-    private float winkel = 0;
+    private int depth = 0;
 
 
     public Ikosaeder() {
@@ -49,23 +48,17 @@ public class Ikosaeder extends GLMinimal {
     }
 
     private void drawIcosaeder(GL4 gl) {
-        if (++winkel > 360) {
-            winkel = 0;
-        }
-
-
-        vertexBuf.rewind();
-        float brightness = 0;
         for (int i = 0; i < 20; i++) {
             Vec3 A = new Vec3(VDATA[TINDICES[i][0]][0], VDATA[TINDICES[i][0]][1], VDATA[TINDICES[i][0]][2]);
             Vec3 B = new Vec3(VDATA[TINDICES[i][1]][0], VDATA[TINDICES[i][1]][1], VDATA[TINDICES[i][1]][2]);
             Vec3 C = new Vec3(VDATA[TINDICES[i][2]][0], VDATA[TINDICES[i][2]][1], VDATA[TINDICES[i][2]][2]);
+            subdivide(gl, A, B, C,depth);
+        }
+    }
 
-            Mat3 rot = Mat3.rotate(winkel, TOLIGHT);
-
-            A = rot.transform(A);
-            B = rot.transform(B);
-            C = rot.transform(C);
+    private void addVertex(GL4 gl, Vec3 A, Vec3 B, Vec3 C) {
+        vertexBuf.rewind();
+        float brightness = 0;
 
             //n = (B-A) x (C-A)
             Vec3 n = B.subtract(A).cross(C.subtract(A)).normalize();
@@ -78,9 +71,25 @@ public class Ikosaeder extends GLMinimal {
 
             setColor(0,0.2f,0.2f,1);
 
-        }
+
         copyBuffer(gl, 20*3);   // VertexArray in OpenGL-Buffer kopieren
-        gl.glDrawArrays(GL4.GL_TRIANGLES, 0, 20*3);
+        gl.glDrawArrays(GL4.GL_TRIANGLES, 0, 3);
+    }
+
+    private void subdivide(GL4 gl, Vec3 A, Vec3 B, Vec3 C, int depth) {
+
+
+        if (depth > 0) {
+            Vec3 aa = new Vec3(A.x + B.x, A.y + B.y, A.z + B.z).normalize();
+            Vec3 bb = new Vec3(B.x + C.x, C.y + B.y, C.z + B.z).normalize();
+            Vec3 cc = new Vec3(A.x + C.x, A.y + C.y, A.z + C.z).normalize();
+            subdivide(gl, A, aa, cc, depth-1);
+            subdivide(gl, B, bb, aa, depth-1);
+            subdivide(gl, C, cc, bb, depth-1);
+            subdivide(gl, aa, bb, cc, depth-1);
+        } else {
+            addVertex(gl, A, B, C);
+        }
     }
 
     private Vec3 shadow(Vec3 p, Vec3 v) {
@@ -119,21 +128,6 @@ public class Ikosaeder extends GLMinimal {
     @Override
     public void init(GLAutoDrawable drawable) {
         super.init(drawable);
-        FPSAnimator ani = new FPSAnimator(drawable, 70);
-        ani.start();
-    }
-
-    private static Mat3 rotX(double a) {
-        double alpha = Math.toRadians(a);
-        return new Mat3(1,0,0,0,(float)Math.cos(alpha), (float)Math.sin(alpha), 0, -(float)Math.sin(alpha), (float)Math.cos(alpha));
-    }
-    private static Mat3 rotY(double a) {
-        double alpha = Math.toRadians(a);
-        return new Mat3((float)Math.cos(alpha), 0, -(float)Math.sin(alpha), 0, 1, 0, (float)Math.sin(alpha), 0, (float)Math.cos(alpha));
-    }
-    private static Mat3 rotZ(double a) {
-        double alpha = Math.toRadians(a);
-        return new Mat3((float)Math.cos(alpha), (float)Math.sin(alpha), 0, -(float)Math.sin(alpha),(float)Math.cos(alpha), 0, 0, 0, 1);
     }
 
     //  -----------  main-Methode  ---------------------------
@@ -145,5 +139,32 @@ public class Ikosaeder extends GLMinimal {
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_1:
+                depth = 1;
+                break;
+            case KeyEvent.VK_2:
+                depth = 2;
+                break;
+            case KeyEvent.VK_3:
+                depth = 3;
+                break;
+            case KeyEvent.VK_4:
+                depth = 4;
+                break;
+            case KeyEvent.VK_5:
+                depth = 5;
+                break;
+            case KeyEvent.VK_6:
+                depth = 6;
+                break;
+            case KeyEvent.VK_7:
+                depth = 7;
+                break;
+            case KeyEvent.VK_0:
+                depth = 0;
+                break;
+        }
+        canvas.repaint();
     }
 }
