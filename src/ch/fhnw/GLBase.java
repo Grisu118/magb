@@ -59,7 +59,7 @@ public class GLBase
     float[] currentNormal = { 1,0,0,0};         // aktuelle Normale fuer Vertices
 
     // -------  Vertex-Array fuer Position- und Color-Attribute  ------------
-    FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
+    public FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
     int vaoId;                                  // VertexArray Object Identifier
     int vertexBufId;                            // Vertex Buffer Identifier
 
@@ -83,7 +83,7 @@ public class GLBase
        currentNormal[3] = 0;
     }
 
-    void putVertex(float x, float y, float z)      // Vertex-Daten in Buffer speichern
+    protected void putVertex(float x, float y, float z)      // Vertex-Daten in Buffer speichern
     {  vertexBuf.put(x);
        vertexBuf.put(y);
        vertexBuf.put(z);
@@ -99,7 +99,7 @@ public class GLBase
     }
 
 
-    void copyBuffer(GL gl,int nVertices)            // Vertex-Array in OpenGL-Buffer kopieren
+    protected void copyBuffer(GL gl, int nVertices)            // Vertex-Array in OpenGL-Buffer kopieren
     {  vertexBuf.rewind();
        gl.glBindBuffer(GL4.GL_ARRAY_BUFFER, vertexBufId);
        gl.glBufferSubData(GL4.GL_ARRAY_BUFFER, 0, nVertices*vertexSize, vertexBuf);
@@ -219,7 +219,7 @@ public class GLBase
 
     // -------  Zeichenmethoden  --------------------------------
 
-    void zeichneAchsen(GL4 gl, float a, float b, float c)
+    protected void zeichneAchsen(GL4 gl, float a, float b, float c)
     {  vertexBuf.rewind();
        putVertex(0,0,0);           // Eckpunkte in VertexArray speichern
        putVertex(a,0,0);

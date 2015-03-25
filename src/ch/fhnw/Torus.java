@@ -1,11 +1,15 @@
-package ch.fhnw;//  -------------   JOGL SampleProgram  (Quader) ------------
+package ch.fhnw;
+//  -------------   JOGL SampleProgram  (Torus) ------------
+
+import java.awt.event.*;
+
+import ch.fhnw.GLBase;
+import ch.fhnw.util.math.*;
 
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
-public class Quader extends GLBase {
+public class Torus extends GLBase {
     //  --------------  globale Daten  -----------------
 
     float dCam = 10;                          // Abstand Kamera von O
@@ -15,39 +19,57 @@ public class Quader extends GLBase {
     float bottom, top;
     float near = 0.4f, far = 100;
     float a = 1, b = 1, c = 1;                      // Kanten des Quaders
+
     int MouseX = 0, MouseY = 0;
     boolean close = false;
 
 
     //  ------------------  Methoden  --------------------
 
-
-    void gitterBoden(GL4 gl, int nx, int nz,    // Anzahl Linien
-                     float dx, float dz)        // Abstaende
+    void rotFlaeche(GL4 gl,                          // Rotationsflaeche
+                    float[] x, float[] y,                // Kurve in xy-Ebene
+                    float[] nx, float[] ny,              // Normalenvektoren
+                    int n2)                              // Anzahl Streifen
     {
-        float xmax = 0.5f * (nx - 1) * dx;
-        float xmin = -xmax;
-        float zmax = 0.5f * (nz - 1) * dz;
-        float zmin = -zmax;
-        float x, z;
+        float todeg = (float) (180 / Math.PI);
+        float dtheta = (float) (2 * Math.PI / n2);       // Drehwinkel
+        float c = (float) Math.cos(dtheta);            // Drehmatrix
+        float s = (float) Math.sin(dtheta);
         vertexBuf.rewind();
-        z = zmin;
-        for (int i = 0; i < nz; i++)       // Linien parallel x-Achse
-        {
-            putVertex(xmin, 0, z);
-            putVertex(xmax, 0, z);
-            z += dz;
+        int n1 = x.length;
+        for (int i = 0; i < n1; i++) {
+            setNormal(nx[i], ny[i], 0);
+            putVertex(x[i], y[i], 0);
+            setNormal(c*nx[i], ny[i], -s*nx[i]);
+            putVertex(c * x[i], y[i], -s * x[i]);
         }
-        x = xmin;
-        for (int i = 0; i < nx; i++)       // Linien parallel z-Achse
-        {
-            putVertex(x, 0, zmin);
-            putVertex(x, 0, zmax);
-            x += dx;
-        }
-        int nVertices = 2 * nx + 2 * nz;
+        int nVertices = 2 * n1;
         copyBuffer(gl, nVertices);
-        gl.glDrawArrays(GL4.GL_LINES, 0, nVertices);
+        pushMatrix(gl);
+        for (int i = 0; i < n2; i++) {
+            gl.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, nVertices);
+            rotate(gl, todeg*dtheta, 0,1,0);
+        }
+        popMatrix(gl);
+    }
+
+
+    void zeichneTorus(GL4 gl, float r, float R, int n1, int n2) {
+        int nn1 = n1 + 1;
+        float[] x = new float[nn1];      // Kreis in xy-Ebene
+        float[] y = new float[nn1];
+        float[] nx = new float[nn1];     // Normalenvektoren
+        float[] ny = new float[nn1];
+        float dphi = 2 * (float) (Math.PI / n1), phi;
+        for (int i = 0; i <= n1; i++) {
+            phi = i * dphi;
+            x[i] = r * (float) Math.cos(phi);
+            y[i] = r * (float) Math.sin(phi);
+            nx[i] = x[i];
+            ny[i] = y[i];
+            x[i] += R;
+        }
+        rotFlaeche(gl, x, y, nx, ny, n2);
     }
 
 
@@ -56,30 +78,14 @@ public class Quader extends GLBase {
         GL4 gl = drawable.getGL().getGL4();
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
         setCameraSystem(gl, dCam, elevation, azimut);
-        pushMatrix(gl);
-        setColor(1, 1, 1, 1);
+        setColor(0.5f, 0.5f, 0.5f, 1);
         disableLighting(gl);
-        gitterBoden(gl, 10, 10, 1f, 2.0f);
-        setColor(0, 1, 1, 1);
-        setLightPos(gl, -10, 100, 10);
+        zeichneAchsen(gl, 2, 2, 2);
+        setColor(1, 1, 1, 1);
         enableLighting(gl);
-        moebius(gl);
-        setColor(1,0,0,1);
-        translate(gl, 0,0,2);
-        rotate(gl, 180, 1,1,0);
-        pushMatrix(gl);
-        moebius(gl);
-    }
-
-    private void moebius(GL4 gl) {
-        for (int i = 0; i < 360; i += 2) {
-            rotate(gl, i, 0, 1, 0);
-            translate(gl, 2, 0, 0);
-            rotate(gl, i / 2, 0, 0, 1);
-            zeichneQuader(gl, 0.5f, 0.05f, 0.05f);
-            popMatrix(gl);
-            pushMatrix(gl);
-        }
+        setLightParam(gl, 0.8f, 0, 0f, 0.4f,0.4f,0.4f);
+        setLightPos(gl, -10, 1, 10);
+        zeichneTorus(gl, 0.4f, 1, 24, 48);
     }
 
 
@@ -99,7 +105,7 @@ public class Quader extends GLBase {
     //  -----------  main-Methode  ---------------------------
 
     public static void main(String[] args) {
-        new Quader();
+        Torus sample = new Torus();
     }
 
 
@@ -107,7 +113,6 @@ public class Quader extends GLBase {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        boolean temp = false;
         switch (key) {
             case KeyEvent.VK_UP:
                 elevation++;
@@ -125,20 +130,6 @@ public class Quader extends GLBase {
                 azimut++;
                 canvas.repaint();
                 break;
-            case KeyEvent.VK_PERIOD:
-                if ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK ) == KeyEvent.SHIFT_DOWN_MASK) {
-                    close = true;
-                    temp = true;
-                }
-
-                break;
-        }
-        if (close && !temp) {
-            if (key == KeyEvent.VK_Q) {
-                System.exit(0);
-            } else {
-                close = false;
-            }
         }
     }
 
@@ -156,7 +147,7 @@ public class Quader extends GLBase {
         if (MouseY - e.getY() > sensibility) {
             elevation--;
             MouseY = e.getY();
-        } else if (MouseY - e.getY() < -sensibility){
+        } else if (MouseY - e.getY() < -sensibility) {
             elevation++;
             MouseY = e.getY();
         }

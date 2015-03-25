@@ -21,6 +21,4 @@ void main()
        vec3 rgb = min(Color.rgb * scatteredLight, vec3(1.0));
        Color = vec4(rgb, Color.a);
    }
-   else
-     Color = vertexColor;
 }
