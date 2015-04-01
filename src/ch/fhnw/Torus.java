@@ -5,6 +5,7 @@ import java.awt.event.*;
 
 import ch.fhnw.GLBase;
 import ch.fhnw.util.math.*;
+import com.jogamp.opengl.util.FPSAnimator;
 
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
@@ -13,12 +14,21 @@ public class Torus extends GLBase {
     //  --------------  globale Daten  -----------------
 
     float dCam = 10;                          // Abstand Kamera von O
-    float elevation = 0;                      // Kamera-System
-    float azimut = 0;
-    float left = -0.2f, right = 0.2f;             // ViewingVolume fuer Zentralproj.
+    float elevation = 10;                      // Kamera-System
+    float azimut = 20;
+    float left = -0.3f, right = 0.3f;             // ViewingVolume fuer Zentralproj.
     float bottom, top;
     float near = 0.4f, far = 100;
     float a = 1, b = 1, c = 1;                      // Kanten des Quaders
+
+    Vec3 a0 = new Vec3(1, 0, 1);
+    Vec3 a1 = new Vec3(1, 0, 0);
+    float phi0 = 140;
+    float phi1 = 50;
+    Vec3 x0 = new Vec3(3, 2, 0);
+    Vec3 x1 = new Vec3(-4, 1, 1);
+
+    int floating = 0;
 
     int MouseX = 0, MouseY = 0;
     boolean close = false;
@@ -40,7 +50,7 @@ public class Torus extends GLBase {
         for (int i = 0; i < n1; i++) {
             setNormal(nx[i], ny[i], 0);
             putVertex(x[i], y[i], 0);
-            setNormal(c*nx[i], ny[i], -s*nx[i]);
+            setNormal(c * nx[i], ny[i], -s * nx[i]);
             putVertex(c * x[i], y[i], -s * x[i]);
         }
         int nVertices = 2 * n1;
@@ -48,7 +58,7 @@ public class Torus extends GLBase {
         pushMatrix(gl);
         for (int i = 0; i < n2; i++) {
             gl.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, nVertices);
-            rotate(gl, todeg*dtheta, 0,1,0);
+            rotate(gl, todeg * dtheta, 0, 1, 0);
         }
         popMatrix(gl);
     }
@@ -83,9 +93,58 @@ public class Torus extends GLBase {
         zeichneAchsen(gl, 2, 2, 2);
         setColor(1, 1, 1, 1);
         enableLighting(gl);
-        setLightParam(gl, 0.8f, 0, 0f, 0.4f,0.4f,0.4f);
+        setLightParam(gl, 0.8f, 0, 0f, 0.4f, 0.4f, 0.4f);
         setLightPos(gl, -10, 1, 10);
-        zeichneTorus(gl, 0.4f, 1, 24, 48);
+        /* With SLERP
+        int nPositionen = 6;
+        Vec3 xt, at;
+        Vec3 v = x1.subtract(x0);
+        float t, phi;
+        for (int i = 1; i <= nPositionen; i++) {
+            pushMatrix(gl);
+            t = i / (float)nPositionen;
+            xt = x0.add(v.scale(t));
+            phi = (float) Math.acos(a0.normalize().dot(a1.normalize()) * MathUtil.DEGREES_TO_RADIANS);
+            at = a0.scale((float) ((Math.sin((1-t)*phi))/Math.sin(phi))).add(a1.scale((float) (Math.sin(t*phi) / Math.sin(phi))));
+            translate(gl, xt.x, xt.y, xt.z);
+            rotate(gl, phi0, at.x, at.y, at.z);
+            zeichneTorus(gl, 0.2f, 0.6f, 24, 48);
+            popMatrix(gl);
+        }*/
+
+        /* Quaternionen*/
+        int nPositionen = 6;
+        Vec3 xt;
+        Vec3 v = x1.subtract(x0);
+        float t;
+        Quaternion q0 = Quaternion.fromAxis(a0, phi0);
+        Quaternion q1 = Quaternion.fromAxis(a1, phi1);
+        Quaternion qt;
+
+
+        for (int i = 1; i <= nPositionen; i++) {
+            pushMatrix(gl);
+            t = i / (float)nPositionen;
+            xt = x0.add(v.scale(t));
+            translate(gl, xt.x, xt.y, xt.z);
+            qt = q0.slerp(q1, t);
+            Vec4 r = qt.getAxisAngle();
+            rotate(gl, r.w, r.x, r.y, r.z);
+            zeichneTorus(gl, 0.2f, 0.6f, 24, 48);
+            popMatrix(gl);
+        }
+
+        /* Animation
+        int nPositionen = 50;
+        Vec3 v = x1.subtract(x0);
+        pushMatrix(gl);
+        float t = floating++ / (float)nPositionen;
+        Vec3 xt = x0.add(v.scale(t));
+        translate(gl, xt.x, xt.y, xt.z);
+        rotate(gl, phi0, a0.x, a0.y, a0.z);
+        zeichneTorus(gl, 0.2f, 0.6f, 24, 48);
+        popMatrix(gl);
+        */
     }
 
 
@@ -106,6 +165,7 @@ public class Torus extends GLBase {
 
     public static void main(String[] args) {
         Torus sample = new Torus();
+
     }
 
 
