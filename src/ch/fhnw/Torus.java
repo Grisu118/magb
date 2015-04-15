@@ -13,12 +13,7 @@ import javax.media.opengl.GLAutoDrawable;
 public class Torus extends GLBase {
     //  --------------  globale Daten  -----------------
 
-    float dCam = 10;                          // Abstand Kamera von O
-    float elevation = 10;                      // Kamera-System
-    float azimut = 20;
-    float left = -0.3f, right = 0.3f;             // ViewingVolume fuer Zentralproj.
-    float bottom, top;
-    float near = 0.4f, far = 100;
+
     float a = 1, b = 1, c = 1;                      // Kanten des Quaders
 
     Vec3 a0 = new Vec3(1, 0, 1);
@@ -30,8 +25,7 @@ public class Torus extends GLBase {
 
     int floating = 0;
 
-    int MouseX = 0, MouseY = 0;
-    boolean close = false;
+
 
 
     //  ------------------  Methoden  --------------------
@@ -169,50 +163,6 @@ public class Torus extends GLBase {
     }
 
 
-    //  ---------  Keyboard-Events  ------------------
 
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-        switch (key) {
-            case KeyEvent.VK_UP:
-                elevation++;
-                canvas.repaint();
-                break;
-            case KeyEvent.VK_DOWN:
-                elevation--;
-                canvas.repaint();
-                break;
-            case KeyEvent.VK_LEFT:
-                azimut--;
-                canvas.repaint();
-                break;
-            case KeyEvent.VK_RIGHT:
-                azimut++;
-                canvas.repaint();
-                break;
-        }
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        int sensibility = 3;
-        if (MouseX - e.getX() > sensibility) {
-            azimut++;
-            MouseX = e.getX();
-        } else if (MouseX - e.getX() < -sensibility) {
-            azimut--;
-            MouseX = e.getX();
-        }
-
-        if (MouseY - e.getY() > sensibility) {
-            elevation--;
-            MouseY = e.getY();
-        } else if (MouseY - e.getY() < -sensibility) {
-            elevation++;
-            MouseY = e.getY();
-        }
-
-        canvas.repaint();
-    }
 
 }

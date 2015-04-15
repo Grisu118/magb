@@ -8,15 +8,8 @@ import java.awt.event.MouseEvent;
 public class Quader extends GLBase {
     //  --------------  globale Daten  -----------------
 
-    float dCam = 10;                          // Abstand Kamera von O
-    float elevation = 0;                      // Kamera-System
-    float azimut = 0;
-    float left = -0.2f, right = 0.2f;             // ViewingVolume fuer Zentralproj.
-    float bottom, top;
-    float near = 0.4f, far = 100;
+
     float a = 1, b = 1, c = 1;                      // Kanten des Quaders
-    int MouseX = 0, MouseY = 0;
-    boolean close = false;
 
 
     //  ------------------  Methoden  --------------------

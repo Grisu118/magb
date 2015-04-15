@@ -15,7 +15,7 @@ import ch.fhnw.util.math.*;
 
 
 public class GLBase
-       implements WindowListener, GLEventListener, KeyListener, MouseMotionListener
+       implements WindowListener, GLEventListener, KeyListener, MouseMotionListener, MouseWheelListener
 {
     // --------------------  Globale Daten  ------------------------------
 
@@ -32,7 +32,7 @@ public class GLBase
     int windowWidth = 800;
     int windowHeight = 600;
     float[] clearColor = {0,0,1,1};             // Fensterhintergrund (Blau)
-    GLCanvas canvas;                            // OpenGL Window
+    public GLCanvas canvas;                            // OpenGL Window
 
 
     // -------  ModelView-Matrix --------
@@ -62,6 +62,16 @@ public class GLBase
     public FloatBuffer vertexBuf = Buffers.newDirectFloatBuffer(bufSize);
     int vaoId;                                  // VertexArray Object Identifier
     int vertexBufId;                            // Vertex Buffer Identifier
+
+    public float dCam = 10;                          // Abstand Kamera von O
+    public float elevation = 10;                      // Kamera-System
+    public float azimut = 20;
+    public float left = -0.3f, right = 0.3f;             // ViewingVolume fuer Zentralproj.
+    public float bottom, top;
+    public float near = 0.4f, far = 100;
+
+    public int MouseX = 0, MouseY = 0;
+    public boolean close = false;
 
 
     // -----------------------------  Methoden  --------------------------------
@@ -124,7 +134,7 @@ public class GLBase
     public void setLightPos(GL4 gl, double x, double y, double z)
     { Vec4 tmp = new Vec4(x,y,z,0);
       Vec4 toLight = viewMatrix.transform(tmp);
-      gl.glUniform4fv(LightDirectionLoc, 1, toLight.toArray(),0);
+      gl.glUniform4fv(LightDirectionLoc, 1, toLight.toArray(), 0);
     }
 
 
@@ -138,26 +148,26 @@ public class GLBase
       Ambient[1] = gAmbient;
       Ambient[2] = bAmbient;
       gl.glUniform4fv(LightColorLoc, 1, LightColor,0);
-      gl.glUniform4fv(AmbientLoc, 1, Ambient,0);
+      gl.glUniform4fv(AmbientLoc, 1, Ambient, 0);
     }
 
 
     //  ---------  Operationen fuer ModelView-Matrix  --------------------
-    void rotate(GL4 gl, float phi, float x, float y, float z)              // Rechtsmultiplikation mit R
+    public void rotate(GL4 gl, float phi, float x, float y, float z)              // Rechtsmultiplikation mit R
     {  viewMatrix = viewMatrix.postMultiply(Mat4.rotate(phi,x,y,z));
        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix.toArray(), 0);
        gl.glUniformMatrix4fv(normalMatrixLoc, 1, false, viewMatrix.toArray(), 0);
     }
 
 
-    void translate(GL4 gl, float x, float y, float z)                      // Rechtsmultiplikation mit T
+    public void translate(GL4 gl, float x, float y, float z)                      // Rechtsmultiplikation mit T
     {  viewMatrix = viewMatrix.postMultiply(Mat4.translate(x,y,z));
        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix.toArray(), 0);
        gl.glUniformMatrix4fv(normalMatrixLoc, 1, false, viewMatrix.toArray(), 0);
     }
 
 
-    void scale(GL4 gl, float x, float y, float z)                      // Rechtsmultiplikation mit T
+    public void scale(GL4 gl, float x, float y, float z)                      // Rechtsmultiplikation mit T
     {  viewMatrix = viewMatrix.postMultiply(Mat4.scale(x,y,z));
        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix.toArray(), 0);
        gl.glUniformMatrix4fv(normalMatrixLoc, 1, false, viewMatrix.toArray(), 0);
@@ -253,7 +263,7 @@ public class GLBase
        putVertex(d.x, d.y, d.z);
        int nVertices = 4;
        copyBuffer(gl, nVertices);
-       gl.glDrawArrays(GL4.GL_TRIANGLE_FAN,0,nVertices);
+       gl.glDrawArrays(GL4.GL_TRIANGLE_FAN, 0, nVertices);
     }
 
 
@@ -269,12 +279,12 @@ public class GLBase
        Vec3 BB = new Vec3( a, b,-c);
        Vec3 CC = new Vec3(-a, b,-c );
        Vec3 DD = new Vec3(-a, b, c);
-       zeichneViereck(gl,D,C,B,A);          // Boden
-       zeichneViereck(gl,AA,BB,CC,DD);      // Deckflaeche
-       zeichneViereck(gl,A,B,BB,AA);        // Seitenflaechen
-       zeichneViereck(gl,B,C,CC,BB);
-       zeichneViereck(gl,D,DD,CC,C);
-       zeichneViereck(gl,A,AA,DD,D);
+       zeichneViereck(gl, D, C, B, A);          // Boden
+       zeichneViereck(gl, AA, BB, CC, DD);      // Deckflaeche
+       zeichneViereck(gl, A, B, BB, AA);        // Seitenflaechen
+       zeichneViereck(gl, B, C, CC, BB);
+       zeichneViereck(gl, D, DD, CC, C);
+       zeichneViereck(gl, A, AA, DD, D);
     }
 
 
@@ -302,13 +312,13 @@ public class GLBase
        vertexBufId = tmp[0];
        gl.glBindBuffer(GL4.GL_ARRAY_BUFFER, vertexBufId);
        gl.glBufferData(GL4.GL_ARRAY_BUFFER, bufSize,            // Speicher allozieren
-                            null, GL4.GL_STATIC_DRAW);
+               null, GL4.GL_STATIC_DRAW);
        gl.glEnableVertexAttribArray(vPositionLocation);
        gl.glEnableVertexAttribArray(vColorLocation);
        gl.glEnableVertexAttribArray(vNormalLocation);
        gl.glVertexAttribPointer(vPositionLocation, 4, GL4.GL_FLOAT, false, vertexSize, 0);
        gl.glVertexAttribPointer(vColorLocation, 4, GL4.GL_FLOAT, false, vertexSize, vPositionSize);
-       gl.glVertexAttribPointer(vNormalLocation, 4, GL4.GL_FLOAT, false, vertexSize, vPositionSize+vColorSize);
+       gl.glVertexAttribPointer(vNormalLocation, 4, GL4.GL_FLOAT, false, vertexSize, vPositionSize + vColorSize);
    }
 
 
@@ -331,8 +341,8 @@ public class GLBase
        vPositionLocation = gl.glGetAttribLocation(program, "vertexPosition");
        vColorLocation = gl.glGetAttribLocation(program, "vertexColor");
        vNormalLocation = gl.glGetAttribLocation(program, "vertexNormal");
-       float[] identityMatrix = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-       gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, identityMatrix, 0);
+       float[] identityMatrix = {1, 0, 0, 0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, identityMatrix, 0);
        gl.glUniformMatrix4fv(projMatrixLoc, 1, false, identityMatrix, 0);
        gl.glUniformMatrix4fv(normalMatrixLoc, 1, false, identityMatrix, 0);
        gl.glUniform1i(LightingLoc, Lighting);
@@ -342,6 +352,7 @@ public class GLBase
        setupGLBuffers(gl);
        canvas.addKeyListener(this);
         canvas.addMouseMotionListener(this);
+        canvas.addMouseWheelListener(this);
    }
 
 
@@ -385,17 +396,66 @@ public class GLBase
 
 
     //  ----------  Keyboard-Events  --------------
-    public void keyPressed(KeyEvent e) { }
+
     public void keyTyped(KeyEvent e) { }
     public void keyReleased(KeyEvent e) { }
 
-    @Override
-    public void mouseDragged(MouseEvent e) {
 
-    }
 
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    //  ---------  Keyboard-Events  ------------------
+
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        switch (key) {
+            case KeyEvent.VK_UP:
+                elevation++;
+                canvas.repaint();
+                break;
+            case KeyEvent.VK_DOWN:
+                elevation--;
+                canvas.repaint();
+                break;
+            case KeyEvent.VK_LEFT:
+                azimut--;
+                canvas.repaint();
+                break;
+            case KeyEvent.VK_RIGHT:
+                azimut++;
+                canvas.repaint();
+                break;
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        int sensibility = 3;
+        if (MouseX - e.getX() > sensibility) {
+            azimut++;
+            MouseX = e.getX();
+        } else if (MouseX - e.getX() < -sensibility) {
+            azimut--;
+            MouseX = e.getX();
+        }
+
+        if (MouseY - e.getY() > sensibility) {
+            elevation--;
+            MouseY = e.getY();
+        } else if (MouseY - e.getY() < -sensibility) {
+            elevation++;
+            MouseY = e.getY();
+        }
+
+        canvas.repaint();
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        dCam += e.getWheelRotation()/2f;
+        canvas.repaint();
     }
 }
