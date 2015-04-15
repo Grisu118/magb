@@ -86,7 +86,7 @@ public class GLMinimal
     }
 
 
-    void zeichneAchsen(GL4 gl, float a, float b, float c) {
+    public void zeichneAchsen(GL4 gl, float a, float b, float c) {
         vertexBuf.rewind();
         putVertex(0, 0, 0);           // Eckpunkte in VertexArray speichern
         putVertex(a, 0, 0);
@@ -131,6 +131,11 @@ public class GLMinimal
         float cc = (float) Math.cos(toRad * azimut);
         float ss = (float) Math.sin(toRad * azimut);
         viewMatrix = new Mat4(cc, -s * ss, c * ss, 0, 0, c, s, 0, -ss, -s * cc, c * cc, 0, 0, 0, -r, 1);
+        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix.toArray(), 0);
+    }
+
+    public void setCameraSystem(GL4 gl, Vec3 a, Vec3 b, Vec3 up) {
+        viewMatrix = Mat4.lookAt(a, b, up);
         gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix.toArray(), 0);
     }
 
