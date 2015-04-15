@@ -89,7 +89,7 @@ public class Torus extends GLBase {
         enableLighting(gl);
         setLightParam(gl, 0.8f, 0, 0f, 0.4f, 0.4f, 0.4f);
         setLightPos(gl, -10, 1, 10);
-        /* With SLERP
+        /* With SLERP Falsch
         int nPositionen = 6;
         Vec3 xt, at;
         Vec3 v = x1.subtract(x0);
