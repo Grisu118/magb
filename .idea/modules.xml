@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Jtmp/Jtmp.iml" filepath="$PROJECT_DIR$/Jtmp/Jtmp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PicsiSWT/PicsiSWT.iml" filepath="$PROJECT_DIR$/PicsiSWT/PicsiSWT.iml" />
       <module fileurl="file://$PROJECT_DIR$/magb.iml" filepath="$PROJECT_DIR$/magb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openGL/openGL.iml" filepath="$PROJECT_DIR$/openGL/openGL.iml" />
     </modules>
   </component>
 </project>

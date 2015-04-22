@@ -78,30 +78,30 @@ public class EarthT extends GLMinimalT
     }
 
 
-   void zeichneKugel(GL2 gl,float r, int n1, int n2)
+    void zeichneKugel(GL2 gl,float r, int n1, int n2)
     {  float[] x = new float[n1];      // Halbkreis in xy-Ebene von Nord- zum Suedpol
-       float[] y = new float[n1];
-       float dphi = (float)(Math.PI / (n1-1)), phi;
-       for (int i = 0; i < n1; i++)
-       {  phi  = (float)(0.5*Math.PI) - i*dphi;
-          x[i] = r*(float)Math.cos(phi);
-          y[i] = r*(float)Math.sin(phi);
-       }
-       rotFlaeche(gl,x,y,n2);
-     }
+        float[] y = new float[n1];
+        float dphi = (float)(Math.PI / (n1-1)), phi;
+        for (int i = 0; i < n1; i++)
+        {  phi  = (float)(0.5*Math.PI) - i*dphi;
+            x[i] = r*(float)Math.cos(phi);
+            y[i] = r*(float)Math.sin(phi);
+        }
+        rotFlaeche(gl,x,y,n2);
+    }
 
 
     @Override
     public void init(GLAutoDrawable drawable)
     {  super.init(drawable);
        GL2 gl = drawable.getGL().getGL2();
-//       loadTextureFromFile(gl, textureFileName);          // Textur von jpg-File einlesen
-       loadTextureFromArray(gl, texColors,8,8);               // Textur von Array
-       Mat4 T = Mat4.translate(0,1,0);
-       T = T.postMultiply(Mat4.scale(1,-1,1));
+       loadTextureFromFile(gl, textureFileName);          // Textur von jpg-File einlesen
+//       loadTextureFromArray(gl, texColors, 8, 8);               // Textur von Array
+        Mat4 T = Mat4.translate(0,1,0);
+        T = T.postMultiply(Mat4.scale(1, -1, 1));
        setTexMatrix(gl,T) ;
        FPSAnimator animator = new FPSAnimator(canvas,200,true);
-       animator.start();
+        animator.start();
     }
 
 
