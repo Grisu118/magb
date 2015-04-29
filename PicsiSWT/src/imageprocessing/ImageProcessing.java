@@ -47,7 +47,7 @@ public class ImageProcessing {
 		// TODO add here further image processing objects (they are inserted into the Image menu)
 		//Shortcut Shift+F1 = SWT.SHIFT | SWT.F1
 		m_menuItems.add(new ImageMenuItem("&Convert\tF2", SWT.F2, new Converter()));
-		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new BinaryConverter()));
+		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new Dithering()));
 	}
 	
 	public void createMenuItems(Menu menu) {
