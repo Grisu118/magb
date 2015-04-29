@@ -33,10 +33,6 @@ public class Dithering implements IImageProcessor {
         int height = input.getImageData().height;
         byte[] oldData = input.getImageData().data;
         double[] errorData = new double[oldData.length];
-        /*
-        for (int i = 0; i < errorData.length; i++) {
-            errorData[i] = 0xFF & oldData[i];
-        }*/
         ImageData imgData = new ImageData(width, height, 1, paletteData);
         byte[] newData = imgData.data;
         int j = 0;
