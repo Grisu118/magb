@@ -3,6 +3,7 @@ package imageprocessing;
 import main.PicsiSWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import utils.Parallel;
 
@@ -24,6 +25,12 @@ public class Converter implements IImageProcessor {
 
         ImageData inData = input.getImageData();
 
+        RGB[] rgbs = new RGB[256];
+        for (int i = 0; i < rgbs.length; i++) {
+            rgbs[i] = new RGB(i,i,i);
+        }
+        PaletteData pallet = new PaletteData(rgbs);
+        ImageData imgData = new ImageData(inData.width, inData.height, 8, pallet);
         switch (n) {
             case 0:
                 Parallel.For(0, inData.height, v -> {
@@ -31,10 +38,7 @@ public class Converter implements IImageProcessor {
                         int pixel = inData.getPixel(u, v);
                         RGB rgb = inData.palette.getRGB(pixel);
                         int grayScale = (int) (rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114);
-                        rgb.red = grayScale;
-                        rgb.green = grayScale;
-                        rgb.blue = grayScale;
-                        inData.setPixel(u, v, inData.palette.getPixel(rgb));
+                        imgData.setPixel(u, v, grayScale);
                     }
                 });
                 break;
@@ -45,7 +49,7 @@ public class Converter implements IImageProcessor {
                         RGB rgb = inData.palette.getRGB(pixel);
                         rgb.green = rgb.red;
                         rgb.blue = rgb.red;
-                        inData.setPixel(u, v, inData.palette.getPixel(rgb));
+                        imgData.setPixel(u, v, rgb.red);
                     }
                 });
                 break;
@@ -56,7 +60,7 @@ public class Converter implements IImageProcessor {
                         RGB rgb = inData.palette.getRGB(pixel);
                         rgb.red = rgb.green;
                         rgb.blue = rgb.green;
-                        inData.setPixel(u, v, inData.palette.getPixel(rgb));
+                        imgData.setPixel(u, v, rgb.green);
                     }
                 });
                 break;
@@ -67,12 +71,12 @@ public class Converter implements IImageProcessor {
                         RGB rgb = inData.palette.getRGB(pixel);
                         rgb.red = rgb.blue;
                         rgb.green = rgb.blue;
-                        inData.setPixel(u, v, inData.palette.getPixel(rgb));
+                        imgData.setPixel(u, v, rgb.blue);
                     }
                 });
                 break;
         }
-        return new Image(input.getDevice(), inData);
+        return new Image(input.getDevice(), imgData);
     }
 
     private int getConverterType() {
