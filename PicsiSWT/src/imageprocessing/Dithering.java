@@ -1,12 +1,10 @@
 package imageprocessing;
 
-import gui.MainWindow;
 import main.PicsiSWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-import utils.Parallel;
 
 import javax.swing.*;
 
@@ -40,16 +38,13 @@ public class Dithering implements IImageProcessor {
             for (int i = 0; i < oldData.length; i++) {
                 int val = 0xFF & oldData[i];
                 int error;
-
                 val += errorData[i];
-
                 if (val > threshold) {
                     newData[j] = (byte) (newData[j] | mask[i % 8]);
                     error  = val-255;
                 } else {
                     error = val;
                 }
-
                 if (i + 1 < errorData.length && (i + 1) % width < width-1) {
                     errorData[i + 1] += ( error * 7.0 / 16);
                 }
@@ -62,7 +57,6 @@ public class Dithering implements IImageProcessor {
                 if (i + width + 1 < errorData.length  && (i + 1) % width < width-1) {
                     errorData[i + width + 1] += ( error * 1.0 / 16);
                 }
-
                 if (i % 8 == 7) {
                     j++;
                 }
@@ -80,7 +74,6 @@ public class Dithering implements IImageProcessor {
                 } else {
                     error = val;
                 }
-
                 if (i + 1 < errorData.length  && (i + 1) % width < width-1) {
                     errorData[i + 1] += error * 8 / 42.0;
                 }
