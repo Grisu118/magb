@@ -85,7 +85,7 @@ public class Converter implements IImageProcessor {
                 "Green",
                 "Blue"};
         return JOptionPane.showOptionDialog(null,
-                "In welchen Kanal moechten Sie konvertieren?",
+                "In welchen Kanal möchten Sie konvertieren?",
                 "Converter",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
