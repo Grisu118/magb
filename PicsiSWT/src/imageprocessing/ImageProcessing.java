@@ -48,6 +48,7 @@ public class ImageProcessing {
 		//Shortcut Shift+F1 = SWT.SHIFT | SWT.F1
 		m_menuItems.add(new ImageMenuItem("&Convert\tF2", SWT.F2, new Converter()));
 		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new Dithering()));
+		m_menuItems.add(new ImageMenuItem("&Rotate\tF4", SWT.F4, new Rotator()));
 	}
 	
 	public void createMenuItems(Menu menu) {
