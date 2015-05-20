@@ -1,5 +1,6 @@
 package imageprocessing;
 
+import main.PicsiSWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import utils.Parallel;
@@ -7,13 +8,13 @@ import utils.Parallel;
 import javax.swing.*;
 
 /**
- * Created by benjamin on 13.05.2015.
+ * Class for rotating an image.
  */
 public class Rotator implements IImageProcessor {
 
     @Override
     public boolean isEnabled(int imageType) {
-        return true;
+        return imageType != PicsiSWT.IMAGE_TYPE_INDEXED;
     }
 
     @Override
