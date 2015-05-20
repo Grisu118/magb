@@ -49,7 +49,7 @@ public class ImageProcessing {
 		m_menuItems.add(new ImageMenuItem("&Convert\tF2", SWT.F2, new Converter()));
 		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new Dithering()));
 		m_menuItems.add(new ImageMenuItem("&Rotate\tF4", SWT.F4, new Rotator()));
-		m_menuItems.add(new ImageMenuItem("&Scale + Rotate\tF5", SWT.F5, new AfffineTrans()));
+		m_menuItems.add(new ImageMenuItem("&Scale + Rotate\tF5", SWT.F5, new ScaleAndRot()));
 	}
 	
 	public void createMenuItems(Menu menu) {
