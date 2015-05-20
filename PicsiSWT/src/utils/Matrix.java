@@ -2,13 +2,13 @@ package utils;
 
 /**
  * Matrix class (data type = double)
- * 
+ *
  * @author Christoph Stamm
  *
  */
 public class Matrix {
 	private double[][] m_data; // matrix
-	
+
 	/**
 	 * Creates a matrix with m rows and n columns
 	 * @param m number of rows
@@ -17,7 +17,7 @@ public class Matrix {
 	public Matrix(int m, int n) {
 		m_data = new double[m][n];
 	}
-	
+
 	/**
 	 * Creates a matrix and uses data as internal matrix data
 	 * @param data
@@ -25,18 +25,18 @@ public class Matrix {
 	public Matrix(double[][] data) {
 		m_data = data;
 	}
-	
+
 	public int nRows() { return m_data.length; }
 	public int nCols() { return m_data[0].length; }
 	public double el(int i, int j) { return m_data[i][j]; }
-	
+
 	/**
 	 * Matrix addition: A += m
 	 * @param m adds matrix m to this
 	 */
 	public void plus(Matrix m) {
 		assert nRows() == m.nRows() && nCols() == m.nCols() : "different dimensions";
-		
+
 		for (int i=0; i < nRows(); i++) {
 			for (int j=0; j < nCols(); j++) {
 				m_data[i][j] += m.m_data[i][j];
@@ -50,14 +50,14 @@ public class Matrix {
 	 */
 	public void minus(Matrix m) {
 		assert nRows() == m.nRows() && nCols() == m.nCols() : "different dimensions";
-		
+
 		for (int i=0; i < nRows(); i++) {
 			for (int j=0; j < nCols(); j++) {
 				m_data[i][j] -= m.m_data[i][j];
 			}
 		}
 	}
-	
+
 	/**
 	 * Matrix multiplication with scalar d: A = d*A
 	 * @param d
@@ -69,7 +69,7 @@ public class Matrix {
 			}
 		}
 	}
-	
+
 	/**
 	 * Matrix-vector multiplication y = A*v, where A is this matrix and v the input vector
 	 * @param v input vector
@@ -78,7 +78,7 @@ public class Matrix {
 	public double[] multiply(double[] v) {
 		assert nCols() == v.length : "incompatible dimensions";
 		double[] res = new double[nRows()];
-		
+
 		for (int i=0; i < nRows(); i++) {
 			double sum = 0;
 			for (int j=0; j < nCols(); j++) {
@@ -88,16 +88,16 @@ public class Matrix {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Matrix-matrix multiplication A*m, where A is this matrix and m the input matrix
-	 * @param m 
+	 * @param m
 	 * @return resulting matrix
 	 */
 	public Matrix multiply(Matrix m) {
 		assert nCols() == m.nRows() : "incompatible dimensions";
 		Matrix res = new Matrix(nRows(), m.nCols());
-		
+
 		for (int i=0; i < res.nRows(); i++) {
 			for (int j=0; j < res.nCols(); j++) {
 				double sum = 0;
@@ -109,14 +109,14 @@ public class Matrix {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Matrix transposition
-	 * @return tranposed matrix
+	 * @return transposed matrix
 	 */
 	public Matrix transpose() {
 		Matrix res = new Matrix(nCols(), nRows());
-		
+
 		for (int i=0; i < nRows(); i++) {
 			for (int j=0; j < nCols(); j++) {
 				res.m_data[j][i] = m_data[i][j];
@@ -124,22 +124,34 @@ public class Matrix {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Matrix inversion
 	 * @return inverted matrix
 	 */
 	public Matrix inverse() {
-		double den = m_data[0][0]*m_data[1][1] - m_data[0][1]*m_data[1][0];
-		assert den != 0 : "matrix is singular";
-		
-		return new Matrix(new double[][] {
-			{ m_data[1][1]/den,-m_data[0][1]/den, (m_data[0][1]*m_data[1][2] - m_data[0][2]*m_data[1][1])/den }, 
-			{-m_data[1][0]/den, m_data[0][0]/den, (m_data[0][2]*m_data[1][0] - m_data[0][0]*m_data[1][2])/den }, 
-			{ 0, 0 , 1 }
-		});
+		if (m_data[2][0] == 0 && m_data[2][1] == 0 && m_data[2][2] == 1) {
+			double den = m_data[0][0]*m_data[1][1] - m_data[0][1]*m_data[1][0];
+			assert den != 0 : "matrix is singular";
+
+			return new Matrix(new double[][] {
+					{ m_data[1][1]/den,-m_data[0][1]/den, (m_data[0][1]*m_data[1][2] - m_data[0][2]*m_data[1][1])/den },
+					{-m_data[1][0]/den, m_data[0][0]/den, (m_data[0][2]*m_data[1][0] - m_data[0][0]*m_data[1][2])/den },
+					{ 0, 0 , 1 }
+			});
+		} else {
+			double den = m_data[0][0]*m_data[1][1]*m_data[2][2] + m_data[0][1]*m_data[1][2]*m_data[2][0] + m_data[0][2]*m_data[1][0]*m_data[2][1]
+					- m_data[0][0]*m_data[1][2]*m_data[2][1] - m_data[0][1]*m_data[1][0]*m_data[2][2] - m_data[0][2]*m_data[1][1]*m_data[2][0];
+			assert den != 0 : "matrix is singular";
+
+			return new Matrix(new double[][] {
+					{ (m_data[1][1]*m_data[2][2] - m_data[1][2]*m_data[2][1])/den, (m_data[0][2]*m_data[2][1] - m_data[0][1]*m_data[2][2])/den, (m_data[0][1]*m_data[1][2] - m_data[0][2]*m_data[1][1])/den },
+					{ (m_data[1][2]*m_data[2][0] - m_data[1][0]*m_data[2][2])/den, (m_data[0][0]*m_data[2][2] - m_data[0][2]*m_data[2][0])/den, (m_data[0][2]*m_data[1][0] - m_data[0][0]*m_data[1][2])/den },
+					{ (m_data[1][0]*m_data[2][1] - m_data[1][1]*m_data[2][0])/den, (m_data[0][1]*m_data[2][0] - m_data[0][0]*m_data[2][1])/den, (m_data[0][0]*m_data[1][1] - m_data[0][1]*m_data[1][0])/den }
+			});
+		}
 	}
-	
+
 	/**
 	 * Creates a quadratic identity matrix of size n
 	 * @param n
@@ -147,13 +159,13 @@ public class Matrix {
 	 */
 	public static Matrix identy(int n) {
 		Matrix res = new Matrix(n, n);
-		
+
 		for (int i=0; i < n; i++) {
 			res.m_data[i][i] = 1;
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Creates a 3x3 rotation matrix for 2D rotation with homogeneous coordinates
 	 * @param alpha angle
@@ -162,7 +174,7 @@ public class Matrix {
 	public static Matrix rotation(double alpha) {
 		double cosa = Math.cos(alpha);
 		double sina = Math.sin(alpha);
-		
+
 		return new Matrix(new double[][] {{ cosa, sina, 0 }, { -sina, cosa, 0 }, { 0, 0 , 1 }});
 	}
 

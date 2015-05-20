@@ -35,7 +35,7 @@ public class Rotator implements IImageProcessor {
                 if (uu < 0 || uu >= width
                         || vv < 0 || vv >= height) {
                     data.setPixel(u, v, 0);
-                    data.setAlpha(u,v,0);
+                    data.setAlpha(u, v, 0);
                 } else {
                     data.setPixel(u, v, old.getPixel(uu, vv));
                     data.setAlpha(u, v, old.getAlpha(uu, vv));
