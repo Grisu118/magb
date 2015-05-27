@@ -159,7 +159,7 @@ public class View extends Canvas {
 		m_image = image;
 		if (m_image != null) {
 			m_imageData = image.getImageData();
-			m_imageType = PicsiSWT.determineimageType(m_imageData);
+			m_imageType = PicsiSWT.determineImageType(m_imageData);
 		} else {
 			m_imageData = null;
 		}
