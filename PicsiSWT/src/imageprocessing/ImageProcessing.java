@@ -50,6 +50,7 @@ public class ImageProcessing {
 		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new Dithering()));
 		m_menuItems.add(new ImageMenuItem("&Rotate\tF4", SWT.F4, new Rotator()));
 		m_menuItems.add(new ImageMenuItem("&Scale + Rotate\tF5", SWT.F5, new ScaleAndRot()));
+		m_menuItems.add(new ImageMenuItem("&AllRGB\tF6", SWT.F6, new AllRGB()));
 	}
 	
 	public void createMenuItems(Menu menu) {
