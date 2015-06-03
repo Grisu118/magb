@@ -43,7 +43,7 @@ public class PicsiSWT {
 	public static final int IMAGE_TYPE_INDEXED = 4;
 
 	public static final String APP_NAME = "FHNW Picsi SWT";
-	public static final String APP_VERSION = "1.3.2015.17";
+	public static final String APP_VERSION = "1.4.2015.22";
 
 	public static Shell s_shell;
 
