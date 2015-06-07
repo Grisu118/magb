@@ -10,8 +10,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import utils.Parallel;
 
 /**
  * Image processing class: contains widely used image processing functions
@@ -51,6 +54,7 @@ public class ImageProcessing {
 		m_menuItems.add(new ImageMenuItem("&Rotate\tF4", SWT.F4, new Rotator()));
 		m_menuItems.add(new ImageMenuItem("&Scale + Rotate\tF5", SWT.F5, new ScaleAndRot()));
 		m_menuItems.add(new ImageMenuItem("&AllRGB\tF6", SWT.F6, new AllRGB()));
+        m_menuItems.add(new ImageMenuItem("&Filter\tF7", SWT.F7, new Filter()));
 	}
 	
 	public void createMenuItems(Menu menu) {
@@ -81,6 +85,77 @@ public class ImageProcessing {
 		return m_menuItems.get(i).m_process.isEnabled(m_views.getFirstimageType());
 	}
 
-	// add general image processing class methods here
+	public static ImageData convolve(ImageData inData, int imageType,
+									 int[][] filter, int norm, int offset) {
+        try {
+            ImageData outData = (ImageData) inData.clone();
+
+            int left = -(filter[0].length / 2);
+            int right = -left;
+            int top = -(filter.length / 2);
+            int bottom = -top;
+
+            //Parallel.For(0, outData.height, v -> {
+            for (int v = 0; v < outData.height; v++) {
+                for (int u = 0; u < outData.width; u++) {
+                    int uu = 0;
+                    int vv = 0;
+                    RGB rgb = new RGB(0, 0, 0);
+
+
+                    for (int y = top; y <= bottom; y++) {
+                        for (int x = left; x <= right; x++) {
+                            vv = v + y;
+                            uu = u + x;
+                            if (vv < 0 || vv >= outData.height) {
+                                vv = v - y;
+                            }
+                            if (uu < 0 || uu >= outData.width) {
+                                uu = u - x;
+                            }
+                            int pixel = inData.getPixel(uu, vv);
+                            RGB tmp = inData.palette.getRGB(pixel);
+                            rgb.red += tmp.red * filter[y + bottom][x + right];
+                            rgb.green += tmp.green * filter[y + bottom][x + right];
+                            rgb.blue += tmp.blue * filter[y + bottom][x + right];
+                        }
+                    }
+                    if (norm != 0) {
+                        rgb.red /= norm;
+                        rgb.blue /= norm;
+                        rgb.green /= norm;
+                    }
+                    if (offset != 0) {
+                        rgb.red += offset;
+                        rgb.blue += offset;
+                        rgb.green += offset;
+                    }
+
+                    outData.setPixel(u, v, outData.palette.getPixel(clamp(rgb)));
+                }
+            }//);
+
+            return outData;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+	}
+
+    public static int clamp(int intensity){
+        if(intensity > 255) intensity = 255;
+        else if(intensity < 0) intensity = 0;
+        return intensity;
+    }
+
+    public static RGB clamp(RGB rgb){
+        rgb.red = clamp(rgb.red);
+        rgb.green = clamp(rgb.green);
+        rgb.blue = clamp(rgb.blue);
+        return rgb;
+    }
+
+
+    // add general image processing class methods here
 	
 }
