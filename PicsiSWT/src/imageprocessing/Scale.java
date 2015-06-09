@@ -3,6 +3,8 @@ package imageprocessing;
 import main.PicsiSWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import utils.Matrix;
 import utils.Parallel;
 
@@ -32,25 +34,52 @@ public class Scale implements IImageProcessor {
                 .multiply(Matrix.translation(-mx, -my))
                 .inverse();
 
-        int A, B, C, D;
-        Parallel.For(0, outData.height, v -> {
-            double[] v1 = {0, v, 1};
+        int offset = 0;
+        //Parallel.For(0, outData.height, v -> {
+        try {
+            for (int v = 0; v < outData.height; v++) {
+                double[] v1 = {0, v, 1};
 
-            for (int u = 0; u < outData.width; u++) {
-                v1[0] = u;
-                double[] v2 = matrix.multiply(v1);
-                int uu = (int) Math.round(v2[0] / v2[2]);
-                int vv = (int) Math.round(v2[1] / v2[2]);
-                if (uu < 0 || uu >= outData.width
-                        || vv < 0 || vv >= outData.height) {
-                    outData.setPixel(u, v, 0);
-                    outData.setAlpha(u, v, 0);
-                } else {
-                    outData.setPixel(u, v, inData.getPixel(uu, vv));
-                    outData.setAlpha(u, v, inData.getAlpha(uu, vv));
+                for (int u = 0; u < outData.width; u++) {
+                    v1[0] = u;
+                    double[] v2 = matrix.multiply(v1);
+                    int x = (int) (scale * u);
+                    int y = (int) (scale * v);
+                    double x_diff = (scale * v) - x;
+                    double y_diff = (scale * u) - y;
+                    if (x < 0 || x >= outData.width - 1
+                            || y < 0 || y >= outData.height - 1) {
+                        outData.setPixel(u, v, 0);
+                        outData.setAlpha(u, v, 0);
+                    } else {
+
+                        RGB A = inData.palette.getRGB(inData.getPixel(x, y));
+                        int Aa = inData.getAlpha(x, y);
+                        RGB B = inData.palette.getRGB(inData.getPixel(x + 1, y));
+                        int Ba = inData.getAlpha(x + 1, y);
+                        RGB C = inData.palette.getRGB(inData.getPixel(x, y + 1));
+                        int Ca = inData.getAlpha(x, y + 1);
+                        RGB D = inData.palette.getRGB(inData.getPixel(x + 1, y + 1));
+                        int Da = inData.getAlpha(x + 1, y + 1);
+                        double Er = A.red + x_diff * (B.red - A.red);
+                        double Gr = Er + y_diff * ((C.red + x_diff * (D.red - C.red)) - Er);
+                        double Eg = A.green + x_diff * (B.green - A.green);
+                        double Gg = Eg + y_diff * ((C.green + x_diff * (D.green - C.green)) - Eg);
+                        double Eb = A.blue + x_diff * (B.blue - A.blue);
+                        double Gb = Eb + y_diff * ((C.blue + x_diff * (D.blue - C.blue)) - Eb);
+                        double Ea = Aa + x_diff * (Ba - Aa);
+                        double Fa = Ca + x_diff * (Da - Ca);
+                        double Ga = Ea + y_diff * (Fa - Ea);
+                        RGB rgb = new RGB(ImageProcessing.clamp((int) Gr), ImageProcessing.clamp((int) Gg), ImageProcessing.clamp((int) Gb));
+                        int pix = outData.palette.getPixel(rgb);
+                        outData.setPixel(u, v, pix);
+                        outData.setAlpha(u, v, (int) Ga);
+                    }
                 }
-            }
-        });
+            }//);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return new Image(input.getDevice(), outData);
     }

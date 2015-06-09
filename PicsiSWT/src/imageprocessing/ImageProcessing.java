@@ -53,6 +53,7 @@ public class ImageProcessing {
 		m_menuItems.add(new ImageMenuItem("&Convert to Binary\tF3", SWT.F3, new Dithering()));
 		m_menuItems.add(new ImageMenuItem("&Rotate\tF4", SWT.F4, new Rotator()));
 		m_menuItems.add(new ImageMenuItem("&Scale + Rotate\tF5", SWT.F5, new ScaleAndRot()));
+        m_menuItems.add(new ImageMenuItem("&Scale\tShift+F5", SWT.SHIFT | SWT.F5, new Scale()));
 		m_menuItems.add(new ImageMenuItem("&AllRGB\tF6", SWT.F6, new AllRGB()));
         m_menuItems.add(new ImageMenuItem("&Filter\tF7", SWT.F7, new Filter()));
 	}
