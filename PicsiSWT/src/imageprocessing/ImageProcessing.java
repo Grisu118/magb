@@ -56,6 +56,7 @@ public class ImageProcessing {
         m_menuItems.add(new ImageMenuItem("&Scale\tShift+F5", SWT.SHIFT | SWT.F5, new Scale()));
 		m_menuItems.add(new ImageMenuItem("&AllRGB\tF6", SWT.F6, new AllRGB()));
         m_menuItems.add(new ImageMenuItem("&Filter\tF7", SWT.F7, new Filter()));
+        m_menuItems.add(new ImageMenuItem("&Kantendetektion\tF8", SWT.F8, new EdgeDetection()));
 	}
 	
 	public void createMenuItems(Menu menu) {
@@ -88,7 +89,6 @@ public class ImageProcessing {
 
 	public static ImageData convolve(ImageData inData, int imageType,
 									 int[][] filter, int norm, int offset) {
-        try {
             ImageData outData = (ImageData) inData.clone();
 
             int left = -(filter[0].length / 2);
@@ -96,8 +96,8 @@ public class ImageProcessing {
             int top = -(filter.length / 2);
             int bottom = -top;
 
-            //Parallel.For(0, outData.height, v -> {
-            for (int v = 0; v < outData.height; v++) {
+            Parallel.For(0, outData.height, v -> {
+            //for (int v = 0; v < outData.height; v++) {
                 for (int u = 0; u < outData.width; u++) {
                     int uu = 0;
                     int vv = 0;
@@ -134,13 +134,9 @@ public class ImageProcessing {
 
                     outData.setPixel(u, v, outData.palette.getPixel(clamp(rgb)));
                 }
-            }//);
+            });
 
             return outData;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
 	}
 
     public static int clamp(int intensity){
