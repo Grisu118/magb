@@ -19,7 +19,7 @@ public class EdgeDetection implements IImageProcessor {
     @Override
     public Image run(Image input, int imageType) {
         int n = optionDialog();
-        ImageData inData = (ImageData) input.getImageData();
+        ImageData inData = input.getImageData();
         int[][] gauss = {{1,1,1}, {1,1,1}, {1,1,1}};
         inData = ImageProcessing.convolve(inData, imageType, gauss, 9, 0);
         switch (n) {

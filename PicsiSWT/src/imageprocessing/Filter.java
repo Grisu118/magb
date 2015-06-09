@@ -18,7 +18,7 @@ public class Filter implements IImageProcessor {
     public Image run(Image input, int imageType) {
         int n = optionDialog();
         int iterations = Integer.parseInt(JOptionPane.showInputDialog("Iterations:"));
-        ImageData inData = (ImageData) input.getImageData();
+        ImageData inData = input.getImageData();
         for(int i = 0; i < iterations; i++){
             if(n == 0) {
                 int[][] filter = {{1,1,1}, {1,1,1}, {1,1,1}};
