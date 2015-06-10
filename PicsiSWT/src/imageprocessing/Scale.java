@@ -34,8 +34,8 @@ public class Scale implements IImageProcessor {
                     double x = u/scale;
                     double y = v/scale;
 
-                    if (x < 0 || x >= outData.width - 1
-                            || y < 0 || y >= outData.height - 1) {
+                    if (x < 0 || x >= outData.width
+                            || y < 0 || y >= outData.height) {
                         outData.setPixel(u, v, 0);
                         outData.setAlpha(u, v, 0);
                     } else {

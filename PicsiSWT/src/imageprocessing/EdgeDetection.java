@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.RGB;
 import utils.Parallel;
 
 import javax.swing.*;
+import static imageprocessing.ImageProcessing.clamp;
 
 /**
  * Created by benjamin on 07.06.2015.
@@ -25,19 +26,19 @@ public class EdgeDetection implements IImageProcessor {
         switch (n) {
             case 0: {
                 int[][] filter = {{-1, 0, 1}, {-1, 0, 1}, {-1, 0, 1}};
-                inData = ImageProcessing.convolve(inData, imageType, filter, 2, 0);
+                inData = ImageProcessing.convolve(inData, imageType, filter, 0, 0);
                 break;
             }
             case 1: {
                 int[][] filter2 = {{-1, -1, -1}, {0, 0, 0}, {1, 1, 1}};
-                inData = ImageProcessing.convolve(inData, imageType, filter2, 2, 0);
+                inData = ImageProcessing.convolve(inData, imageType, filter2, 0, 0);
                 break;
             }
             case 2: {
                 int[][] filter = {{-1, 0, 1}, {-1, 0, 1}, {-1, 0, 1}};
-                final ImageData Dx = ImageProcessing.convolve(inData, imageType, filter, 2, 0);
+                final ImageData Dx = ImageProcessing.convolve(inData, imageType, filter, 0, 0);
                 int[][] filter2 = {{-1, -1, -1}, {0, 0, 0}, {1, 1, 1}};
-                final ImageData Dy = ImageProcessing.convolve(inData, imageType, filter2, 2, 0);
+                final ImageData Dy = ImageProcessing.convolve(inData, imageType, filter2, 0, 0);
 
                 final ImageData finalInData = inData;
                 Parallel.For(0, Dx.height, v -> {
@@ -47,7 +48,7 @@ public class EdgeDetection implements IImageProcessor {
                         RGB x = Dx.palette.getRGB(px);
                         RGB y = Dy.palette.getRGB(py);
 
-                        RGB q = new RGB(x.red + y.red, x.green + y.green, x.blue + y.blue);
+                        RGB q = new RGB(clamp(x.red + y.red), clamp(x.green + y.green), clamp(x.blue + y.blue));
                         finalInData.setPixel(u, v, finalInData.palette.getPixel(q));
                     }
                 });
