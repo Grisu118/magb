@@ -58,6 +58,7 @@ public class ImageProcessing {
         m_menuItems.add(new ImageMenuItem("&Filter\tF7", SWT.F7, new Filter()));
         m_menuItems.add(new ImageMenuItem("&Kantendetektion\tF8", SWT.F8, new EdgeDetection()));
         m_menuItems.add(new ImageMenuItem("&Zuschneiden\tF9", SWT.F9, new Crop()));
+        m_menuItems.add(new ImageMenuItem("&Mustererkennung\tF10", SWT.F10, new TemplateDetection()));
 	}
 	
 	public void createMenuItems(Menu menu) {
